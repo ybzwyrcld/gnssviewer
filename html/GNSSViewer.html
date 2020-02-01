@@ -1,66 +1,66 @@
 <html>
 <head>
-	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-	<meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
-	<style type="text/css">
-		body, html,#allmap {width: 100%;height: 100%;overflow: hidden;margin:0;font-family:"微软雅黑";}
-	</style>
-	<script type="text/javascript" src="http://api.map.baidu.com/api?v=3.0&ak={your-ak}"></script>  <!--Replace your Baidu Map AK. -->
-	<title>GNSSViewer</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+    <style type="text/css">
+        body, html,#allmap {width: 100%;height: 100%;overflow: hidden;margin:0;font-family:"微软雅黑";}
+    </style>
+    <script type="text/javascript" src="http://api.map.baidu.com/api?v=3.0&ak={your-ak}"></script>  <!--Replace your Baidu Map AK. -->
+    <title>GNSSViewer</title>
 </head>
 <body>
-	<div id="allmap"></div>
+    <div id="allmap"></div>
 </body>
 </html>
 
 <script type="text/javascript">
-	// 百度地图API功能
-	var map = new BMap.Map("allmap");
-	map.centerAndZoom(new BMap.Point(113.94891552, 22.57302149), 20);
-	map.enableScrollWheelZoom(true);
-	map.clearOverlays();
+    // 百度地图API功能
+    var map = new BMap.Map("allmap");
+    map.centerAndZoom(new BMap.Point(113.94891552, 22.57302149), 20);
+    map.enableScrollWheelZoom(true);
+    map.clearOverlays();
 
     // WebSocket
-	function RunWebSocket() {
+    function RunWebSocket() {
         if ("WebSocket" in window) {
-        	// 打开一个 web socket
+            // 打开一个 web socket
             var ws = new WebSocket("ws://127.0.0.1:8081");  // Replace your WebSocket server IP address and port.
             ws.onopen = function() {};
             ws.onmessage = function (evt) { 
-               	var received_msg = evt.data;
-			    var strs = received_msg.split(" ");
-				var long = strs[0].split(":")[1];
-				var lat = strs[1].split(":")[1];
-				if ((long != null) && (lat != null)) {
-					SetMapMark(long, lat);
-				}
-			};
+                   var received_msg = evt.data;
+                var strs = received_msg.split(" ");
+                var long = strs[0].split(":")[1];
+                var lat = strs[1].split(":")[1];
+                if ((long != null) && (lat != null)) {
+                    SetMapMark(long, lat);
+                }
+            };
             ws.onclose = function() {};
         } else {
-           	// 浏览器不支持 
-			alert("error!!!");
-    	}
+               // 浏览器不支持 
+            alert("error!!!");
+        }
     }
     RunWebSocket();
 
-	function SetMapMark(long, lat) {
-		if ((long != null) && (lat != null)) {
-			// map.clearOverlays(); 
-			var ggPoint = new BMap.Point(parseFloat(long), parseFloat(lat));
-			// 坐标转换完之后的回调函数
-			translateCallback = function (data){
-				if(data.status === 0) {
-					var marker = new BMap.Marker(data.points[0]);
-					map.addOverlay(marker);
-					map.setCenter(data.points[0]);
-				}
-			}
-			setTimeout(function() {
-				var convertor = new BMap.Convertor();
-				var pointArr = [];
-				pointArr.push(ggPoint);
-				convertor.translate(pointArr, 1, 5, translateCallback)
-			}, 10);
-		}
-	}
+    function SetMapMark(long, lat) {
+        if ((long != null) && (lat != null)) {
+            // map.clearOverlays(); 
+            var ggPoint = new BMap.Point(parseFloat(long), parseFloat(lat));
+            // 坐标转换完之后的回调函数
+            translateCallback = function (data){
+                if(data.status === 0) {
+                    var marker = new BMap.Marker(data.points[0]);
+                    map.addOverlay(marker);
+                    map.setCenter(data.points[0]);
+                }
+            }
+            setTimeout(function() {
+                var convertor = new BMap.Convertor();
+                var pointArr = [];
+                pointArr.push(ggPoint);
+                convertor.translate(pointArr, 1, 5, translateCallback)
+            }, 10);
+        }
+    }
 </script>
