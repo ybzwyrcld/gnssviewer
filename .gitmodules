@@ -1,0 +1,6 @@
+[submodule "websocket"]
+	path = websocket
+	url = https://github.com/hanoi404/websocket.git
+[submodule "nmeaparser"]
+	path = nmeaparser
+	url = https://github.com/hanoi404/nmeaparser.git
